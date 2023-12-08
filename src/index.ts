@@ -1,8 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 import express, { Request, Response } from "express";
+import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(cors());
 
 const supabase = createClient(
   "https://jtvdkdhziojophcpguoh.supabase.co",
@@ -20,8 +23,9 @@ type Log = {
   nausea: boolean;
 };
 
-app.get("/logs", (req: Request, res: Response) => {
-  res.send("Hello, TypeScript Express!");
+app.get("/logs", async (req: Request, res: Response) => {
+  const { data } = await supabase.from("Logs").select();
+  res.json(data);
 });
 
 app.listen(port, () => {
