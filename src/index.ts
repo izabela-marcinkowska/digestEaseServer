@@ -29,13 +29,35 @@ type Log = {
 };
 
 app.get("/logs", async (req: Request, res: Response) => {
-  const { data } = await supabase.from("Logs").select();
-  res.json(data);
+  try {
+    const { data, error } = await supabase
+      .from("Logs")
+      .select()
+      .order("date", { ascending: false }); // Assuming 'date' is the field name
+
+    if (error) throw error;
+
+    res.json(data);
+  } catch (error) {
+    console.error("Error in /logs:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 app.get("/rapports", async (req: Request, res: Response) => {
-  const { data } = await supabase.from("Rapports").select();
-  res.json(data);
+  try {
+    const { data, error } = await supabase
+      .from("Rapports")
+      .select()
+      .order("date", { ascending: false }); // Orders by the 'date' field in descending order
+
+    if (error) throw error;
+
+    res.json(data);
+  } catch (error) {
+    console.error("Error in /rapports:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 app.post("/add-log", async (req: Request, res: Response) => {
