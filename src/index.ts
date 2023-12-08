@@ -37,11 +37,25 @@ app.get("/rapports", async (req: Request, res: Response) => {
 app.post("/add-log", async (req: Request, res: Response) => {
   const { date, foodInput, alcohol, bowelMovements, stress, pain, nausea } =
     req.body;
-  const { data, error } = await supabase
-    .from("Logs")
-    .insert({ date, foodInput, alcohol, bowelMovements, stress, pain, nausea })
-    .select();
-  res.json(data);
+
+  try {
+    const { data, error } = await supabase
+      .from("Logs")
+      .insert([
+        { date, foodInput, alcohol, bowelMovements, stress, pain, nausea },
+      ]);
+    if (error) {
+      console.error("Supabase error in /add-log:", error);
+      // Determine if it's a client error (4xx) or server error (5xx)
+      const statusCode = error.code.startsWith("22") ? 400 : 500; // Example, adjust as needed
+      res.status(statusCode).json({ error: error.message });
+      return;
+    }
+    res.json(data);
+  } catch (error) {
+    console.error("Error in /add-log:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 app.listen(port, () => {
