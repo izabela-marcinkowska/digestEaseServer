@@ -28,6 +28,11 @@ app.get("/logs", async (req: Request, res: Response) => {
   res.json(data);
 });
 
+app.get("/rapports", async (req: Request, res: Response) => {
+  const { data } = await supabase.from("Rapports").select();
+  res.json(data);
+});
+
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
