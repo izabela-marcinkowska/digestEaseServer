@@ -4,6 +4,7 @@ import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 3000;
+app.use(express.json());
 
 app.use(cors());
 
@@ -30,6 +31,16 @@ app.get("/logs", async (req: Request, res: Response) => {
 
 app.get("/rapports", async (req: Request, res: Response) => {
   const { data } = await supabase.from("Rapports").select();
+  res.json(data);
+});
+
+app.post("/add-log", async (req: Request, res: Response) => {
+  const { date, foodInput, alcohol, bowelMovements, stress, pain, nausea } =
+    req.body;
+  const { data, error } = await supabase
+    .from("Logs")
+    .insert({ date, foodInput, alcohol, bowelMovements, stress, pain, nausea })
+    .select();
   res.json(data);
 });
 
